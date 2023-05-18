@@ -35,27 +35,36 @@
 
 <div class="row justify-content-center mt-4" id="content" style="display: none;">
 	<div class="card col-md-4">
-		<div class="card-header text-center bg-success">
+		<div class="card-header text-center bg-primary">
 		<input type="text" disabled readonly class="form-control-plaintext text-center text-light" id="jugador1_nombre">
 		</div>
 		<div class="card-body text-center">
 			<h1><input type="number" disabled readonly class="form-control-plaintext text-center" id="jugador1_resultado" value="0"></h1>
 		</div>
-		<div class="card-footer text-center bg-success">
+		<div class="card-footer text-center bg-primary">
 			<a class="btn btn-outline-light" id="jugador1_gol">GOL!</a>
 		</div>
 	</div>
+	<div class="col-md-1">
+		
+	</div>
 	<div class="card col-md-4">
-		<div class="card-header text-center bg-success">
+		<div class="card-header text-center bg-danger">
 		<input type="text" disabled readonly class="form-control-plaintext text-center text-light" id="jugador2_nombre">
 		</div>
 		<div class="card-body text-center">
 			<h1><input type="number" disabled readonly class="form-control-plaintext text-center" id="jugador2_resultado" value="0"></h1>
 		</div>
-		<div class="card-footer text-center bg-success">
+		<div class="card-footer text-center bg-danger">
 			<a class="btn btn-outline-light" id="jugador2_gol">GOL!</a>
 		</div>
 	</div>
+</div>
+<div class="row justify-content-center mt-4" id="tiempo" style="display: none;">
+<h4 class="text-center">Primer tiempo</h4>
+<h2 class="text-center"></h2>
+<br>
+
 </div>
 <img src="maradroga.gif" class="img-responsive mt-3 w-25 h-25 mx-auto" id="img-festejo" style="display: none;" alt="">
 </div>
@@ -74,6 +83,7 @@ document.getElementById("boton_jugar").addEventListener("click", function( event
 
 	document.getElementById("form_jugadores").style.display = "none";
 	document.getElementById("content").style.display = "flex";
+	document.getElementById("tiempo").style.display = "flex";
     
 	document.getElementById('jugador1_nombre').value = jugador1;
 	document.getElementById('jugador2_nombre').value = jugador2;
@@ -101,6 +111,24 @@ butjug1.addEventListener("click", function( event ) {
 		imagen.style.display = "none";
 	}, 2000)
   });
+
+  function secondsToString(seconds) {
+	var hour = Math.floor(seconds / 3600);
+	hour = (hour < 10)? '0' + hour : hour;
+	var minute = Math.floor((seconds / 60) % 60);
+	minute = (minute < 10)? '0' + minute : minute;
+	var second = seconds % 60;
+	second = (second < 10)? '0' + second : second;
+	return hour + ':' + minute + ':' + second;
+}
+
+setInterval(() => {
+function mandarMinutos(){
+	let minutos = 2700;
+	let tiempo = secondsToString(minutos);
+	document.getElementById("tiempo").innerHTML(tiempo);
+}
+}, 1000);
 
 </script>
 </body>
