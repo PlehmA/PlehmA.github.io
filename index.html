@@ -63,6 +63,7 @@
 <div class="row justify-content-center mt-4" id="tiempo" style="display: none;">
 <h4 class="text-center" id="estado"></h4>
 <h2 class="text-center" id="crono"></h2>
+<button type="button" class="btn btn-outline-secondary" id="empezar_partido" onclick="empezarPartido();" style="display: none;">Empezar partido</button>
 <button type="button" class="btn btn-outline-success" id="empezar" onclick="empezarSegundoTiempo();" style="display: none;">Empezar segundo tiempo</button>
 <br>
 
@@ -87,6 +88,7 @@ document.getElementById("boton_jugar").addEventListener("click", function( event
 	document.getElementById("form_jugadores").style.display = "none";
 	document.getElementById("content").style.display = "flex";
 	document.getElementById("tiempo").style.display = "flex";
+	document.getElementById("empezar_partido").style.display = "flex";
     
 	document.getElementById('jugador1_nombre').value = jugador1;
 	document.getElementById('jugador2_nombre').value = jugador2;
@@ -116,11 +118,12 @@ butjug1.addEventListener("click", function( event ) {
   });
 
 function empezarPartido(){
+	document.getElementById("empezar_partido").style.display = "none";
 	var intervalId = setInterval(() => {
 		let tiempo = secondsToString(minutos);
 		document.getElementById("tiempo").innerHTML = tiempo;
 		minutos = minutos+5;
-		if (minutos <= 0) {
+		if (minutos >= 45) {
 			estado = 'Fin del primer tiempo';
 			document.getElementById("empezar").style.display = "flex";
 			clearInterval(intervalId);
@@ -142,6 +145,7 @@ function secondsToString(seconds) {
 function empezarSegundoTiempo(){
 	minutos = 0;
 	document.getElementById("empezar").style.display = "none";
+
 	var intervalSecond = setInterval(() => {
 		let tiempo = secondsToString(minutos);
 		document.getElementById("tiempo").innerHTML = tiempo;
