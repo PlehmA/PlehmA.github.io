@@ -73,6 +73,8 @@
 <script>
 var estado = 'Primer Tiempo';
 var minutos = 0;
+const audio = new Audio('arbitro-futbol-.mp3');
+
 document.getElementById("estado").innerHTML = '<h4 class="text-center">'+estado+'</h4>';
 
 document.getElementById("boton_jugar").addEventListener("click", function( event ) {
@@ -119,7 +121,7 @@ butjug1.addEventListener("click", function( event ) {
 
 function empezarPartido(){
 	// Crea un elemento de audio y asigna la ruta del archivo mp3
-    var audio = new Audio('arbitro-futbol-.mp3');
+    
     
     // Reproduce el audio
     audio.play();
@@ -131,9 +133,14 @@ function empezarPartido(){
 		minutos = minutos+5;
 		if (minutos >= 2700) {
 			estado = 'Fin del primer tiempo';
+			document.getElementById("estado").innerHTML = estado;
 			document.getElementById("empezar").style.display = "flex";
-			audio.play();
-			audio.play();
+			setTimeout(function() {
+				audio.play();
+			}, 1000);
+			setTimeout(function() {
+				audio.play();
+			}, 2000);
 			clearInterval(intervalId);
 		}
 	}, 1000);
@@ -153,7 +160,6 @@ function secondsToString(seconds) {
 function empezarSegundoTiempo(){
 	minutos = 0;
 	document.getElementById("empezar").style.display = "none";
-	var audio = new Audio('arbitro-futbol-.mp3');
     
     // Reproduce el audio
     audio.play();
@@ -164,9 +170,16 @@ function empezarSegundoTiempo(){
 		minutos = minutos+5;
 		if (minutos >= 2700) {
 			estado = 'Final del partido';
-			audio.play();
-			audio.play();
-			audio.play();
+			document.getElementById("estado").innerHTML = estado;
+			setTimeout(function() {
+				audio.play();
+			}, 1000);
+			setTimeout(function() {
+				audio.play();
+			}, 2000);
+			setTimeout(function() {
+				audio.play();
+			}, 3000);
 			clearInterval(intervalSecond);
 		}
 }, 1000);
