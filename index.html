@@ -123,11 +123,12 @@ butjug1.addEventListener("click", function( event ) {
 }
 
 setInterval(() => {
-function mandarMinutos(){
-	let minutos = 2700;
-	let tiempo = secondsToString(minutos);
-	document.getElementById("tiempo").innerHTML(tiempo);
-}
+	function mandarMinutos(){
+		let minutos = 2700;
+		let tiempo = secondsToString(minutos);
+		document.getElementById("tiempo").innerHTML(tiempo);
+		console.log(tiempo);
+	}
 }, 1000);
 
 </script>
