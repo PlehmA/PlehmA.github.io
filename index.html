@@ -116,14 +116,14 @@ butjug1.addEventListener("click", function( event ) {
 
   
 var minutos = 2700;
-setInterval(() => {
+var intervalId = setInterval(() => {
 		let tiempo = secondsToString(minutos);
 		document.getElementById("tiempo").innerHTML = tiempo;
 		minutos = minutos-5;
 		if (minutos <= 0) {
 			document.getElementById("estado").innerHTML = 'Fin del primer tiempo';
 			document.getElementById("empezar").style.display = "flex";
-			return false;
+			clearInterval(intervalId);
 		}
 }, 1000);
 
@@ -140,13 +140,13 @@ function secondsToString(seconds) {
 function empezarSegundoTiempo(){
 	minutos = 2700;
 	document.getElementById("empezar").style.display = "none";
-	setInterval(() => {
+	var intervalSecond = setInterval(() => {
 		let tiempo = secondsToString(minutos);
 		document.getElementById("tiempo").innerHTML = tiempo;
 		minutos = minutos-5;
 		if (minutos <= 0) {
 			document.getElementById("estado").innerHTML = 'Final del partido';
-			return false;
+			clearInterval(intervalSecond);
 		}
 }, 1000);
 }
