@@ -123,7 +123,7 @@ function empezarPartido(){
 		let tiempo = secondsToString(minutos);
 		document.getElementById("crono").innerHTML = tiempo;
 		minutos = minutos+5;
-		if (minutos >= 45) {
+		if (minutos >= 2700) {
 			estado = 'Fin del primer tiempo';
 			document.getElementById("empezar").style.display = "flex";
 			clearInterval(intervalId);
@@ -150,7 +150,7 @@ function empezarSegundoTiempo(){
 		let tiempo = secondsToString(minutos);
 		document.getElementById("crono").innerHTML = tiempo;
 		minutos = minutos+5;
-		if (minutos >= 45) {
+		if (minutos >= 2700) {
 			estado = 'Final del partido';
 			clearInterval(intervalSecond);
 		}
