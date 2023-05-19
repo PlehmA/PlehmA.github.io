@@ -150,7 +150,7 @@ function empezarSegundoTiempo(){
 		let tiempo = secondsToString(minutos);
 		document.getElementById("crono").text = tiempo;
 		minutos = minutos+5;
-		if (minutos <= 0) {
+		if (minutos >= 45) {
 			estado = 'Final del partido';
 			clearInterval(intervalSecond);
 		}
