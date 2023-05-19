@@ -77,6 +77,12 @@ document.getElementById("estado").innerHTML = '<h4 class="text-center">'+estado+
 
 document.getElementById("boton_jugar").addEventListener("click", function( event ) {
 
+	// Crea un elemento de audio y asigna la ruta del archivo mp3
+    var audio = new Audio('arbitro-futbol-.mp3');
+    
+    // Reproduce el audio
+    audio.play();
+
 	const jugador1 = document.getElementById('jugador1_name').value.toUpperCase() ;
 	const jugador2 = document.getElementById('jugador2_name').value.toUpperCase() ;
 
