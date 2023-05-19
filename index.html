@@ -71,7 +71,7 @@
 </div>
 <script>
 var estado = 'Primer Tiempo';
-document.getElementById("estado").innerHTML = estado;
+document.getElementById("estado").innerHTML = '<h4 class="text-center">'+estado+'</h4>';
 
 document.getElementById("boton_jugar").addEventListener("click", function( event ) {
 
@@ -121,7 +121,7 @@ var intervalId = setInterval(() => {
 		document.getElementById("tiempo").innerHTML = tiempo;
 		minutos = minutos-5;
 		if (minutos <= 0) {
-			document.getElementById("estado").innerHTML = 'Fin del primer tiempo';
+			estado = 'Fin del primer tiempo';
 			document.getElementById("empezar").style.display = "flex";
 			clearInterval(intervalId);
 		}
@@ -145,7 +145,7 @@ function empezarSegundoTiempo(){
 		document.getElementById("tiempo").innerHTML = tiempo;
 		minutos = minutos-5;
 		if (minutos <= 0) {
-			document.getElementById("estado").innerHTML = 'Final del partido';
+			estado = 'Final del partido';
 			clearInterval(intervalSecond);
 		}
 }, 1000);
