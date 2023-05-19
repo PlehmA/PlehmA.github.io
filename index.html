@@ -116,7 +116,7 @@ butjug1.addEventListener("click", function( event ) {
 var minutos = 2700;
 setInterval(() => {
 		let tiempo = secondsToString(minutos);
-		document.getElementById("tiempo").innerHTML(tiempo);
+		document.getElementById("tiempo").innerHTML = tiempo;
 		minutos--;
 		console.log(tiempo);
 }, 1000);
