@@ -121,7 +121,7 @@ function empezarPartido(){
 	document.getElementById("empezar_partido").style.display = "none";
 	var intervalId = setInterval(() => {
 		let tiempo = secondsToString(minutos);
-		document.getElementById("crono").text = tiempo;
+		document.getElementById("crono").innerHTML = tiempo;
 		minutos = minutos+5;
 		if (minutos >= 45) {
 			estado = 'Fin del primer tiempo';
@@ -148,7 +148,7 @@ function empezarSegundoTiempo(){
 
 	var intervalSecond = setInterval(() => {
 		let tiempo = secondsToString(minutos);
-		document.getElementById("crono").text = tiempo;
+		document.getElementById("crono").innerHTML = tiempo;
 		minutos = minutos+5;
 		if (minutos >= 45) {
 			estado = 'Final del partido';
