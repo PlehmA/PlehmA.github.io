@@ -61,15 +61,17 @@
 	</div>
 </div>
 <div class="row justify-content-center mt-4" id="tiempo" style="display: none;">
-<h4 class="text-center">Primer tiempo</h4>
-<h2 class="text-center"></h2>
+<h4 class="text-center" id="estado"></h4>
+<h2 class="text-center" id="crono"></h2>
+<button type="button" class="btn btn-outline-success" id="empezar" style="display: none;">Empezar segundo tiempo</button>
 <br>
 
 </div>
 <img src="maradroga.gif" class="img-responsive mt-3 w-25 h-25 mx-auto" id="img-festejo" style="display: none;" alt="">
 </div>
 <script>
-
+var estado = 'Primer Tiempo';
+document.getElementById("estado").innerHTML = estado;
 
 document.getElementById("boton_jugar").addEventListener("click", function( event ) {
 
@@ -117,8 +119,12 @@ var minutos = 2700;
 setInterval(() => {
 		let tiempo = secondsToString(minutos);
 		document.getElementById("tiempo").innerHTML = tiempo;
-		minutos--;
-		console.log(tiempo);
+		minutos = minutos-5;
+		if (minutos <= 0) {
+			document.getElementById("estado").innerHTML = 'Fin del primer tiempo';
+			document.getElementById("empezar").style.display = "flex";
+			return false;
+		}
 }, 1000);
 
 function secondsToString(seconds) {
@@ -128,7 +134,21 @@ function secondsToString(seconds) {
 	minute = (minute < 10)? '0' + minute : minute;
 	var second = seconds % 60;
 	second = (second < 10)? '0' + second : second;
-	return hour + ':' + minute + ':' + second;
+	return minute + ':' + second;
+}
+
+function empezarSegundoTiempo(){
+	minutos = 2700;
+	document.getElementById("empezar").style.display = "none";
+	setInterval(() => {
+		let tiempo = secondsToString(minutos);
+		document.getElementById("tiempo").innerHTML = tiempo;
+		minutos = minutos-5;
+		if (minutos <= 0) {
+			document.getElementById("estado").innerHTML = 'Final del partido';
+			return false;
+		}
+}, 1000);
 }
 </script>
 </body>
