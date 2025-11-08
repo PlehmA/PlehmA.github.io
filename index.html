@@ -1,114 +1,356 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Goles</title>
+    <title>Marcador de Fútbol</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px 0;
+        }
+        .marcador-container {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            margin-top: 20px;
+        }
+        .scoreboard {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            border-radius: 15px;
+            padding: 30px;
+            color: white;
+            margin-bottom: 30px;
+        }
+        .team-score {
+            font-size: 4rem;
+            font-weight: bold;
+        }
+        .team-name {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+        .timer-display {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #ffd700;
+        }
+        .game-status {
+            font-size: 1.2rem;
+            color: #ffd700;
+            margin-bottom: 15px;
+        }
+        .btn-gol {
+            font-size: 1.2rem;
+            padding: 15px 30px;
+            margin: 10px;
+        }
+        .config-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        #img-festejo {
+            display: none !important;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 9999;
+            max-width: 400px;
+            width: 80%;
+        }
+        #img-festejo.show {
+            display: block !important;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <!-- Your existing code -->
-        <div class="row justify-content-center mt-4" id="tiempo" style="display: none;">
-            <h4 class="text-center" id="estado"></h4>
-            <h2 class="text-center" id="crono"></h2>
-            <button type="button" class="btn btn-secondary" id="empezar_partido" onclick="empezarPartido();" style="display: none;">Empezar partido</button>
-            <button type="button" class="btn btn-success" id="empezar" onclick="empezarSegundoTiempo();" style="display: none;">Empezar segundo tiempo</button>
-            <button type="button" class="btn btn-warning" id="pausar" onclick="pausarPartido();" style="display: none;">Pausa</button>
-            <br>
-            <div class="input-group mt-3">
-                <span class="input-group-text" id="basic-addon1">Alargue (minutos)</span>
-                <input type="number" class="form-control" id="minutos_alargue" aria-label="Alargue" aria-describedby="basic-addon1">
-                <button type="button" class="btn btn-info" onclick="empezarAlargue();">Alargue</button>
+        <div class="marcador-container">
+            <!-- Configuración inicial -->
+            <div id="config-inicial" class="config-section">
+                <h2 class="text-center mb-4">Configurar Partido</h2>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Equipo Local</label>
+                        <input type="text" class="form-control" id="equipo_local" value="Equipo Local">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Equipo Visitante</label>
+                        <input type="text" class="form-control" id="equipo_visitante" value="Equipo Visitante">
+                    </div>
+                </div>
+                <div class="text-center">
+                    <button type="button" class="btn btn-primary btn-lg" onclick="iniciarPartido();">Iniciar Partido</button>
+                </div>
+            </div>
+
+            <!-- Marcador principal -->
+            <div id="marcador-principal" style="display: none;">
+                <div class="scoreboard">
+                    <div class="game-status text-center" id="estado">Pre-partido</div>
+                    <div class="timer-display text-center mb-4" id="crono">00:00</div>
+                    
+                    <div class="row align-items-center">
+                        <div class="col-5 text-center">
+                            <div class="team-name" id="nombre_local">Equipo Local</div>
+                            <div class="team-score" id="goles_local">0</div>
+                            <button class="btn btn-success btn-gol" onclick="agregarGol('local');">⚽ Gol Local</button>
+                        </div>
+                        <div class="col-2 text-center">
+                            <h2>VS</h2>
+                        </div>
+                        <div class="col-5 text-center">
+                            <div class="team-name" id="nombre_visitante">Equipo Visitante</div>
+                            <div class="team-score" id="goles_visitante">0</div>
+                            <button class="btn btn-danger btn-gol" onclick="agregarGol('visitante');">⚽ Gol Visitante</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Controles del partido -->
+                <div class="text-center mb-3">
+                    <button type="button" class="btn btn-primary btn-lg" id="empezar_partido" onclick="empezarPartido();">▶️ Empezar Primer Tiempo</button>
+                    <button type="button" class="btn btn-success btn-lg" id="empezar_segundo" onclick="empezarSegundoTiempo();" style="display: none;">▶️ Empezar Segundo Tiempo</button>
+                    <button type="button" class="btn btn-warning btn-lg" id="pausar" onclick="pausarPartido();" style="display: none;">⏸️ Pausar</button>
+                    <button type="button" class="btn btn-info btn-lg" id="reanudar" onclick="reanudarPartido();" style="display: none;">▶️ Reanudar</button>
+                </div>
+
+                <!-- Alargue -->
+                <div class="config-section">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <label class="form-label">Tiempo de alargue (minutos)</label>
+                            <input type="number" class="form-control" id="minutos_alargue" value="15" min="1" max="30">
+                        </div>
+                        <div class="col-md-6">
+                            <button type="button" class="btn btn-info btn-lg w-100" onclick="empezarAlargue();">⏱️ Iniciar Alargue</button>
+                        </div>
+                    </div>
+                    <div class="mt-3 text-center">
+                        <button type="button" class="btn btn-secondary" onclick="reiniciarPartido();">🔄 Reiniciar Partido</button>
+                    </div>
+                </div>
             </div>
         </div>
-        <img src="maradroga.gif" class="img-responsive mt-3 w-25 h-25 mx-auto d-block" id="img-festejo" style="display: none;" alt="">
+        
+        <img src="maradroga.gif" class="img-responsive" id="img-festejo" alt="Celebración">
     </div>
 <script>
-var estado = 'Primer Tiempo';
-var minutos = 0;
+// Variables globales
+var estado = 'Pre-partido';
+var segundos = 0;
 var intervalId;
+var golesLocal = 0;
+var golesVisitante = 0;
+var partidoEnCurso = false;
+var tiempoPausado = false;
 const audio = new Audio('arbitro-futbol-.mp3');
 
-document.getElementById("estado").innerHTML = '<h4 class="text-center">'+estado+'</h4>';
+// Iniciar partido
+function iniciarPartido() {
+    const nombreLocal = document.getElementById("equipo_local").value || "Equipo Local";
+    const nombreVisitante = document.getElementById("equipo_visitante").value || "Equipo Visitante";
+    
+    document.getElementById("nombre_local").textContent = nombreLocal;
+    document.getElementById("nombre_visitante").textContent = nombreVisitante;
+    
+    document.getElementById("config-inicial").style.display = "none";
+    document.getElementById("marcador-principal").style.display = "block";
+    
+    estado = "Primer Tiempo - Listo para empezar";
+    document.getElementById("estado").textContent = estado;
+}
 
-// Your existing code to handle start and goals
-
-function empezarPartido(){
-    audio.play();
+// Empezar primer tiempo
+function empezarPartido() {
+    if (audio) audio.play().catch(e => console.log("Audio no disponible"));
+    
     document.getElementById("empezar_partido").style.display = "none";
-    document.getElementById("pausar").style.display = "flex";
+    document.getElementById("pausar").style.display = "inline-block";
+    
+    estado = "Primer Tiempo";
+    partidoEnCurso = true;
+    segundos = 0;
+    
     intervalId = setInterval(() => {
-        let tiempo = secondsToString(minutos);
-        document.getElementById("crono").innerHTML = tiempo;
-        minutos += 5;
-        if (minutos >= 2700) {
-            estado = 'Fin del primer tiempo';
-            document.getElementById("estado").innerHTML = estado;
-            document.getElementById("empezar").style.display = "flex";
-            setTimeout(() => { audio.play(); }, 1000);
-            setTimeout(() => { audio.play(); }, 2000);
-            clearInterval(intervalId);
+        segundos++;
+        actualizarCronometro();
+        
+        if (segundos >= 2700) { // 45 minutos
+            finalizarPrimerTiempo();
         }
     }, 1000);
 }
 
-function pausarPartido(){
+// Finalizar primer tiempo
+function finalizarPrimerTiempo() {
     clearInterval(intervalId);
+    estado = "Medio Tiempo";
+    document.getElementById("estado").textContent = estado;
     document.getElementById("pausar").style.display = "none";
-    document.getElementById("empezar_partido").style.display = "flex";
+    document.getElementById("empezar_segundo").style.display = "inline-block";
+    
+    if (audio) {
+        setTimeout(() => audio.play().catch(e => {}), 500);
+        setTimeout(() => audio.play().catch(e => {}), 1500);
+    }
 }
 
-function empezarSegundoTiempo(){
-    minutos = 0;
-    document.getElementById("empezar").style.display = "none";
-    document.getElementById("pausar").style.display = "flex";
-    audio.play();
+// Empezar segundo tiempo
+function empezarSegundoTiempo() {
+    if (audio) audio.play().catch(e => console.log("Audio no disponible"));
+    
+    document.getElementById("empezar_segundo").style.display = "none";
+    document.getElementById("pausar").style.display = "inline-block";
+    
+    estado = "Segundo Tiempo";
+    document.getElementById("estado").textContent = estado;
+    segundos = 0;
+    
     intervalId = setInterval(() => {
-        let tiempo = secondsToString(minutos);
-        document.getElementById("crono").innerHTML = tiempo;
-        minutos += 5;
-        if (minutos >= 2700) {
-            estado = 'Final del partido';
-            document.getElementById("estado").innerHTML = estado;
-            setTimeout(() => { audio.play(); }, 1000);
-            setTimeout(() => { audio.play(); }, 2000);
-            setTimeout(() => { audio.play(); }, 3000);
-            clearInterval(intervalId);
+        segundos++;
+        actualizarCronometro();
+        
+        if (segundos >= 2700) { // 45 minutos
+            finalizarPartido();
         }
     }, 1000);
 }
 
-function empezarAlargue(){
-    var extraMinutos = parseInt(document.getElementById("minutos_alargue").value) * 60;
-    audio.play();
-    minutos = 0;
-    estado = 'Alargue';
-    document.getElementById("estado").innerHTML = estado;
+// Finalizar partido
+function finalizarPartido() {
+    clearInterval(intervalId);
+    estado = "Final del Partido";
+    document.getElementById("estado").textContent = estado;
+    document.getElementById("pausar").style.display = "none";
+    partidoEnCurso = false;
+    
+    if (audio) {
+        setTimeout(() => audio.play().catch(e => {}), 500);
+        setTimeout(() => audio.play().catch(e => {}), 1500);
+        setTimeout(() => audio.play().catch(e => {}), 2500);
+    }
+}
+
+// Pausar partido
+function pausarPartido() {
+    clearInterval(intervalId);
+    tiempoPausado = true;
+    document.getElementById("pausar").style.display = "none";
+    document.getElementById("reanudar").style.display = "inline-block";
+    estado = estado + " - PAUSADO";
+    document.getElementById("estado").textContent = estado;
+}
+
+// Reanudar partido
+function reanudarPartido() {
+    tiempoPausado = false;
+    document.getElementById("reanudar").style.display = "none";
+    document.getElementById("pausar").style.display = "inline-block";
+    
+    estado = estado.replace(" - PAUSADO", "");
+    document.getElementById("estado").textContent = estado;
+    
     intervalId = setInterval(() => {
-        let tiempo = secondsToString(minutos);
-        document.getElementById("crono").innerHTML = tiempo;
-        minutos += 5;
-        if (minutos >= extraMinutos) {
-            estado = 'Final del partido';
-            document.getElementById("estado").innerHTML = estado;
-            setTimeout(() => { audio.play(); }, 1000);
-            setTimeout(() => { audio.play(); }, 2000);
-            setTimeout(() => { audio.play(); }, 3000);
-            clearInterval(intervalId);
+        segundos++;
+        actualizarCronometro();
+        
+        const limite = (estado.includes("Alargue")) ? 
+            parseInt(document.getElementById("minutos_alargue").value) * 60 : 2700;
+        
+        if (segundos >= limite) {
+            if (estado.includes("Primer Tiempo")) {
+                finalizarPrimerTiempo();
+            } else {
+                finalizarPartido();
+            }
         }
     }, 1000);
 }
 
-function secondsToString(seconds) {
-    var hour = Math.floor(seconds / 3600);
-    hour = (hour < 10)? '0' + hour : hour;
-    var minute = Math.floor((seconds / 60) % 60);
-    minute = (minute < 10)? '0' + minute : minute;
-    var second = seconds % 60;
-    second = (second < 10)? '0' + second : second;
-    return minute + ':' + second;
+// Empezar alargue
+function empezarAlargue() {
+    const minutosAlargue = parseInt(document.getElementById("minutos_alargue").value) || 15;
+    
+    if (audio) audio.play().catch(e => console.log("Audio no disponible"));
+    
+    estado = "Alargue";
+    document.getElementById("estado").textContent = estado;
+    document.getElementById("empezar_segundo").style.display = "none";
+    document.getElementById("pausar").style.display = "inline-block";
+    segundos = 0;
+    
+    intervalId = setInterval(() => {
+        segundos++;
+        actualizarCronometro();
+        
+        if (segundos >= minutosAlargue * 60) {
+            finalizarPartido();
+        }
+    }, 1000);
+}
+
+// Agregar gol
+function agregarGol(equipo) {
+    if (equipo === 'local') {
+        golesLocal++;
+        document.getElementById("goles_local").textContent = golesLocal;
+    } else {
+        golesVisitante++;
+        document.getElementById("goles_visitante").textContent = golesVisitante;
+    }
+    
+    // Mostrar celebración automáticamente
+    mostrarFestejo();
+}
+
+// Mostrar festejo
+function mostrarFestejo() {
+    const imgFestejo = document.getElementById("img-festejo");
+    imgFestejo.classList.add("show");
+    setTimeout(() => {
+        imgFestejo.classList.remove("show");
+    }, 3000);
+}
+
+// Actualizar cronómetro
+function actualizarCronometro() {
+    const minutos = Math.floor(segundos / 60);
+    const segs = segundos % 60;
+    const tiempo = `${String(minutos).padStart(2, '0')}:${String(segs).padStart(2, '0')}`;
+    document.getElementById("crono").textContent = tiempo;
+}
+
+// Reiniciar partido
+function reiniciarPartido() {
+    if (confirm("¿Estás seguro de que quieres reiniciar el partido?")) {
+        clearInterval(intervalId);
+        segundos = 0;
+        golesLocal = 0;
+        golesVisitante = 0;
+        estado = 'Pre-partido';
+        partidoEnCurso = false;
+        
+        document.getElementById("goles_local").textContent = "0";
+        document.getElementById("goles_visitante").textContent = "0";
+        document.getElementById("crono").textContent = "00:00";
+        document.getElementById("estado").textContent = estado;
+        
+        document.getElementById("empezar_partido").style.display = "inline-block";
+        document.getElementById("empezar_segundo").style.display = "none";
+        document.getElementById("pausar").style.display = "none";
+        document.getElementById("reanudar").style.display = "none";
+        
+        document.getElementById("marcador-principal").style.display = "none";
+        document.getElementById("config-inicial").style.display = "block";
+    }
 }
 </script>
 </body>
