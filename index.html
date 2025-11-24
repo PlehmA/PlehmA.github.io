@@ -115,13 +115,15 @@
                 </div>
 
                 <!-- Controles del partido (Vue) -->
-                <div class="text-center mb-3">
+                <div class="text-center mb-3 d-flex flex-wrap justify-content-center gap-2">
                     <button type="button" class="btn btn-primary btn-lg" v-if="fase === 'pre'" @click="iniciarPartido">▶️ Empezar Primer Tiempo</button>
-                    <button type="button" class="btn btn-success btn-lg" v-if="fase === 'mt'" @click="empezarSegundoTiempo" style="margin-left:8px;">▶️ Empezar Segundo Tiempo</button>
-                    <button type="button" class="btn btn-outline-light btn-lg" v-if="fase === 'primer'" @click="finalizarPrimerTiempo" style="margin-left:8px;">⏭️ Terminar Primer Tiempo</button>
-                    <button type="button" class="btn btn-outline-light btn-lg" v-if="fase === 'segundo'" @click="finalizarPartido" style="margin-left:8px;">⏭️ Terminar Segundo Tiempo</button>
-                    <button type="button" class="btn btn-warning btn-lg" v-if="mostrarControlesPausa && !pausado" @click="pausar" style="margin-left:8px;">⏸️ Pausar</button>
-                    <button type="button" class="btn btn-info btn-lg" v-if="mostrarControlesPausa && pausado" @click="reanudar" style="margin-left:8px;">▶️ Reanudar</button>
+                    <button type="button" class="btn btn-success btn-lg" v-if="fase === 'mt'" @click="empezarSegundoTiempo">▶️ Empezar Segundo Tiempo</button>
+                    <button type="button" class="btn btn-outline-secondary btn-lg" v-if="fase === 'primer'" @click="finalizarPrimerTiempo">⏭️ Terminar Primer Tiempo</button>
+                    <button type="button" class="btn btn-outline-secondary btn-lg" v-if="fase === 'segundo'" @click="finalizarPartido">⏭️ Terminar Segundo Tiempo</button>
+                    <button type="button" class="btn btn-outline-secondary btn-lg" v-if="fase === 'alargue1'" @click="finalizarAlargue">⏭️ Terminar Primer Tiempo Extra</button>
+                    <button type="button" class="btn btn-outline-secondary btn-lg" v-if="fase === 'alargue2'" @click="finalizarAlargue">⏭️ Terminar Segundo Tiempo Extra</button>
+                    <button type="button" class="btn btn-warning btn-lg" v-if="mostrarControlesPausa && !pausado" @click="pausar">⏸️ Pausar</button>
+                    <button type="button" class="btn btn-info btn-lg" v-if="mostrarControlesPausa && pausado" @click="reanudar">▶️ Reanudar</button>
                 </div>
 
                 <!-- Alargues y Penales -->
@@ -131,8 +133,9 @@
                             <label class="form-label">Alargues: dos tiempos extra de 5 minutos cada uno</label>
                             <div class="small text-muted">Se mostrarán los controles automáticamente si hay empate al finalizar el segundo tiempo.</div>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-6 d-flex flex-column gap-2">
                             <button type="button" class="btn btn-info btn-lg w-100" v-if="mostrarBotonAlargue" @click="iniciarAlargue1">⏱️ Iniciar Primer Tiempo Extra (5')</button>
+                            <button type="button" class="btn btn-info btn-lg w-100" v-if="mostrarBotonSegundoAlargue" @click="iniciarAlargue2">⏱️ Iniciar Segundo Tiempo Extra (5')</button>
                         </div>
                     </div>
                     <div class="mt-3 text-center">
@@ -195,6 +198,7 @@
                     case 'mt': return 'Medio Tiempo';
                     case 'segundo': return pausado.value ? 'Segundo Tiempo - PAUSADO' : 'Segundo Tiempo';
                     case 'alargue1': return pausado.value ? 'Primer Tiempo Extra - PAUSADO' : 'Primer Tiempo Extra';
+                    case 'alargue2_pre': return 'Listo para Segundo Tiempo Extra';
                     case 'alargue2': return pausado.value ? 'Segundo Tiempo Extra - PAUSADO' : 'Segundo Tiempo Extra';
                     case 'penales': return 'Penales';
                     case 'final': return 'Final del Partido';
@@ -282,6 +286,11 @@
             }
 
             function finalizarPartido() {
+                if (intervalo.value) {
+                    clearInterval(intervalo.value);
+                    intervalo.value = null;
+                }
+
                 // Si hay empate después de 90' + alargues (o sin alargues) 
                 // se decide si ir a penales o terminar según la lógica: aquí asumimos que
                 // si estamos en 'segundo' y hay empate, el usuario podrá iniciar alargues o penales.
@@ -293,14 +302,15 @@
                     } else {
                         fase.value = 'final';
                     }
-                } else {
-                    // Al finalizar segundo tiempo normal
+                } else if (fase.value === 'segundo') {
                     if (golesLocal.value === golesVisitante.value) {
-                        // dejar opción para alargues o ir directamente a penales con botón
-                        fase.value = 'mt'; // usar medio para dar opción
+                        iniciarAlargue1();
+                        return;
                     } else {
                         fase.value = 'final';
                     }
+                } else {
+                    fase.value = 'final';
                 }
                 try { audio.play(); } catch(e){}
             }
@@ -311,7 +321,8 @@
                 empezarCrono(alargueSeg, () => {
                     // después de primer alargue, si marcador igual, iniciar segundo alargue
                     if (golesLocal.value === golesVisitante.value) {
-                        iniciarAlargue2();
+                        fase.value = 'alargue2_pre';
+                        segundos.value = 0;
                     } else {
                         fase.value = 'final';
                     }
@@ -338,7 +349,8 @@
                 if (fase.value === 'alargue1') {
                     // si termina empate tras el primer alargue, pasar al segundo; si no, final.
                     if (golesLocal.value === golesVisitante.value) {
-                        iniciarAlargue2();
+                        fase.value = 'alargue2_pre';
+                        segundos.value = 0;
                     } else {
                         fase.value = 'final';
                     }
@@ -389,7 +401,8 @@
             const mostrarBotonEmpezarSegundo = computed(() => fase.value === 'mt' && golesLocal.value + golesVisitante.value >= 0);
             const mostrarControlesPausa = computed(() => ['primer','segundo','alargue1','alargue2'].includes(fase.value));
             const mostrarBotonAlargue = computed(() => fase.value === 'mt' && golesLocal.value === golesVisitante.value);
-            const mostrarBotonPenales = computed(() => (fase.value === 'mt' && golesLocal.value === golesVisitante.value) || fase.value === 'penales');
+            const mostrarBotonSegundoAlargue = computed(() => fase.value === 'alargue2_pre');
+            const mostrarBotonPenales = computed(() => ((fase.value === 'mt' || fase.value === 'alargue2_pre') && golesLocal.value === golesVisitante.value) || fase.value === 'penales');
 
             // Mostrar penales entre paréntesis al lado de cada número si hay penales o estamos en penales
             function marcadorConPenales(goles, penales) {
@@ -403,7 +416,7 @@
                 iniciarPartido, empezarSegundoTiempo, iniciarAlargue1, iniciarAlargue2, marcarGol,
                 finalizarPrimerTiempo, finalizarPartido, finalizarAlargue,
                 pausar, reanudar, reiniciar, marcarPenal, mostrarControlesPausa, pausado,
-                mostrarBotonEmpezar, mostrarBotonEmpezarSegundo, mostrarBotonAlargue, mostrarBotonPenales,
+                mostrarBotonEmpezar, mostrarBotonEmpezarSegundo, mostrarBotonAlargue, mostrarBotonSegundoAlargue, mostrarBotonPenales,
                 marcadorConPenales, fase, mostrarFestejo
             };
         }
