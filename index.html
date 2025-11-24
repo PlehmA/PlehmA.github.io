@@ -118,6 +118,8 @@
                 <div class="text-center mb-3">
                     <button type="button" class="btn btn-primary btn-lg" v-if="fase === 'pre'" @click="iniciarPartido">▶️ Empezar Primer Tiempo</button>
                     <button type="button" class="btn btn-success btn-lg" v-if="fase === 'mt'" @click="empezarSegundoTiempo" style="margin-left:8px;">▶️ Empezar Segundo Tiempo</button>
+                    <button type="button" class="btn btn-outline-light btn-lg" v-if="fase === 'primer'" @click="finalizarPrimerTiempo" style="margin-left:8px;">⏭️ Terminar Primer Tiempo</button>
+                    <button type="button" class="btn btn-outline-light btn-lg" v-if="fase === 'segundo'" @click="finalizarPartido" style="margin-left:8px;">⏭️ Terminar Segundo Tiempo</button>
                     <button type="button" class="btn btn-warning btn-lg" v-if="mostrarControlesPausa && !pausado" @click="pausar" style="margin-left:8px;">⏸️ Pausar</button>
                     <button type="button" class="btn btn-info btn-lg" v-if="mostrarControlesPausa && pausado" @click="reanudar" style="margin-left:8px;">▶️ Reanudar</button>
                 </div>
@@ -376,6 +378,7 @@
                 golesLocal, golesVisitante, penalesLocal, penalesVisitante,
                 segundos, tiempoFormateado, estadoTexto, mostrarMarcador,
                 iniciarPartido, empezarSegundoTiempo, iniciarAlargue1, iniciarAlargue2, marcarGol,
+                finalizarPrimerTiempo, finalizarPartido,
                 pausar, reanudar, reiniciar, marcarPenal, mostrarControlesPausa, pausado,
                 mostrarBotonEmpezar, mostrarBotonEmpezarSegundo, mostrarBotonAlargue, mostrarBotonPenales,
                 marcadorConPenales, fase, mostrarFestejo
