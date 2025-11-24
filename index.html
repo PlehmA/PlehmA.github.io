@@ -331,6 +331,29 @@
                 });
             }
 
+            function finalizarAlargue() {
+                clearInterval(intervalo.value);
+                intervalo.value = null;
+
+                if (fase.value === 'alargue1') {
+                    // si termina empate tras el primer alargue, pasar al segundo; si no, final.
+                    if (golesLocal.value === golesVisitante.value) {
+                        iniciarAlargue2();
+                    } else {
+                        fase.value = 'final';
+                    }
+                } else if (fase.value === 'alargue2') {
+                    // si termina empate tras el segundo alargue, ir a penales; si no, final.
+                    if (golesLocal.value === golesVisitante.value) {
+                        fase.value = 'penales';
+                    } else {
+                        fase.value = 'final';
+                    }
+                }
+
+                try { audio.play(); } catch(e){}
+            }
+
             function marcarGol(localOVisitante) {
                 if (localOVisitante === 'local') golesLocal.value++;
                 else golesVisitante.value++;
@@ -378,7 +401,7 @@
                 golesLocal, golesVisitante, penalesLocal, penalesVisitante,
                 segundos, tiempoFormateado, estadoTexto, mostrarMarcador,
                 iniciarPartido, empezarSegundoTiempo, iniciarAlargue1, iniciarAlargue2, marcarGol,
-                finalizarPrimerTiempo, finalizarPartido,
+                finalizarPrimerTiempo, finalizarPartido, finalizarAlargue,
                 pausar, reanudar, reiniciar, marcarPenal, mostrarControlesPausa, pausado,
                 mostrarBotonEmpezar, mostrarBotonEmpezarSegundo, mostrarBotonAlargue, mostrarBotonPenales,
                 marcadorConPenales, fase, mostrarFestejo
